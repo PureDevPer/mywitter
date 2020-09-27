@@ -34,6 +34,16 @@ const Home = ({ userObj }) => {
     setTweet(value);
   };
   // console.log(tweets);
+  const onFileChange = (event) => {
+    const {
+      target: { files },
+    } = event;
+    const theFile = files[0];
+    // https://developer.mozilla.org/en-US/docs/Web/API/FileReader
+    const reader = new FileReader();
+    reader.onloadend = (finishedEvent) => console.log(finishedEvent);
+    reader.readAsDataURL(theFile);
+  };
   return (
     <>
       <form onSubmit={onSubmit}>
@@ -44,6 +54,7 @@ const Home = ({ userObj }) => {
           value={tweet}
           onChange={onChange}
         />
+        <input type="file" accept="image/*" onChange={onFileChange} />
         <input type="submit" value="Tweet" />
       </form>
       <>
