@@ -6,7 +6,7 @@ import Tweet from "components/Tweet";
 const Home = ({ userObj }) => {
   const [tweet, setTweet] = useState("");
   const [tweets, setTweets] = useState([]);
-  const [attachment, setAttachment] = useState(null);
+  const [attachment, setAttachment] = useState();
   useEffect(() => {
     // Real-time
     // https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference#onsnapshot
@@ -20,17 +20,25 @@ const Home = ({ userObj }) => {
   }, []);
   const onSubmit = async (event) => {
     event.preventDefault();
-    // https://firebase.google.com/docs/reference/js/firebase.storage
-    const fileRef = storageService.ref().child(`${userObj.uid}/${uuidv4()}`);
-    const response = await fileRef.putString(attachment, "data_url");
-    console.log(response);
+    let attachmentUrl = "";
+    if (attachment !== "") {
+      // https://firebase.google.com/docs/reference/js/firebase.storage
+      const attachmentRef = storageService
+        .ref()
+        .child(`${userObj.uid}/${uuidv4()}`);
+      const response = await attachmentRef.putString(attachment, "data_url");
+      attachmentUrl = await response.ref.getDownloadURL();
+    }
+    const tweetInfo = {
+      text: tweet,
+      createdAt: Date.now(),
+      creatorId: userObj.uid,
+      attachmentUrl,
+    };
     // https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference#add
-    // await dbService.collection("myMessage").add({
-    //   text: tweet,
-    //   createdAt: Date.now(),
-    //   creatorId: userObj.uid,
-    // });
-    // setTweet("");
+    await dbService.collection("myMessage").add(tweetInfo);
+    setTweet("");
+    setAttachment("");
   };
   const onChange = (event) => {
     const {
