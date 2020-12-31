@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { authService, dbService } from "fbase";
 import { useHistory } from "react-router-dom";
-import { useState } from "react";
 import ProfileTweet from "components/ProfileTweet";
 
 const Profile = ({ userObj }) => {
@@ -22,7 +21,7 @@ const Profile = ({ userObj }) => {
         .where("creatorId", "==", userObj.uid)
         .orderBy("createdAt")
         .get();
-      console.log(tweets.docs.map((doc) => doc.data()));
+      // console.log(tweets.docs.map((doc) => doc.data()));
       tweets.docs.map((doc) => tweet.push(doc.data()));
       setMyTweets(tweet);
     };
